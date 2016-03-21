@@ -27,11 +27,9 @@ namespace WindowsService2
             rs_port.Open();
         }
 
-        public void Opros()
+        public void Opros(string mysqlConnectionString)
         {                                                                                    
-            StreamReader file = new StreamReader(@"c:\ConnectionString.txt");
-            string str_conn = file.ReadLine();
-            SqlConnection conn = new SqlConnection(str_conn);                                         //Connection String
+            SqlConnection conn = new SqlConnection(mysqlConnectionString);                            //Connection String
             byte[] data = new byte[7] { 0x44, 0x30, ID, 0x4B, 0x57, 0x0D, 0x0A };                     //Посылка согласно протокола
             rs_port.Write(data, 0, 7);                                                                //Запись посылки в порт
             System.Threading.Thread.Sleep(100);                                                       //Задержка, ожидание ответа от прибора            
