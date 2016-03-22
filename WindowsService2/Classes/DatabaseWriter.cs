@@ -27,7 +27,7 @@ namespace WindowsService2.Classes
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand("insert into Arhiv (date, value, id) values (@date, @value, @id);"))
+                using (SqlCommand command = new SqlCommand("insert into Arhiv (date, value, id) values (@date, @value, @id);", connection))
                 {
                     command.Parameters.Add(new SqlParameter()
                     {
