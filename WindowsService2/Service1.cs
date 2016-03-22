@@ -17,12 +17,14 @@ namespace WindowsService2
 {
     public partial class Service1 : ServiceBase
     {
-        private ServiceConfig mOptions;
+        private ServiceConfig mConfiguration;
+        private ServiceManager mServiceMan;
 
         public Service1()
         {
             InitializeComponent();
-            this.mOptions = new ServiceConfig();
+            this.mConfiguration = new ServiceConfig();
+            this.mServiceMan = new ServiceManager();
         }
 
         protected override void OnStart(string[] args)
@@ -34,43 +36,13 @@ namespace WindowsService2
                 filename = args[0];
             }
 
-            this.mOptions = new ServiceConfig(filename);
-
-            int portsCount = this.mOptions.Devices.Count(); // Количество портов
-            Thread[] threads = new Thread[portsCount]; // Объявление массива потоков в количестве равном количеству приборов
-
-            for (int i = 0; i < portsCount; i++) // Цикл для создания потоков
-            {
-                threads[i] = new Thread(new ParameterizedThreadStart(this.ReadInThread)); // создание потоков
-                threads[i].Name = "Potok " + i.ToString(); // Имя потока
-                threads[i].IsBackground = true; // Свойство потока - фоновый
-                threads[i].Start(
-                    new ComParameters(
-                        this.mOptions.Devices.ElementAt(i),
-                        this.mOptions.MysqlConnectionString)); // Запуск потока
-            }
-        }
-
-        private void ReadInThread(object o)
-        {
-            ComParameters parameters = o as ComParameters;
-            DeviceConfig config = parameters.Item1;
-            string connection = parameters.Item2;
-
-            COM COM1 = new COM();                           // Объявление объекта класса 'COM'
-            COM1.num_COM = config.PortName;                 // Применение полю 'num_COM' значения 'COM1'
-            COM1.ID = config.Id;                            // Применение полю ID значения "1"
-            COM1.Inic_COM();                                // Инициализация COM порта
-
-            while (true)
-            {
-                COM1.Opros(connection);                     // Запуска метода 'Opros'
-                Thread.Sleep(100);                          // Задержка 0.1сек
-            }
+            this.mConfiguration = new ServiceConfig(filename);
+            this.mServiceMan.Start(this.mConfiguration);
         }
 
         protected override void OnStop()
         {
+            this.mServiceMan.Stop();
         }
     }
 }
