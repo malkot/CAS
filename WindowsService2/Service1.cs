@@ -11,32 +11,32 @@ using System.Threading;
 using System.IO;
 using WindowsService2.Classes;
 
-using ComParameters = System.Tuple<string, string>;
+using ComParameters = System.Tuple<WindowsService2.Classes.DeviceConfig, string>;
 
 namespace WindowsService2
 {
     public partial class Service1 : ServiceBase
     {
-        private ServiceOptions mOptions;
+        private ServiceConfig mOptions;
 
         public Service1()
         {
             InitializeComponent();
-            this.mOptions = new ServiceOptions();
+            this.mOptions = new ServiceConfig();
         }
 
         protected override void OnStart(string[] args)
         {
-            string filename = @"c:\ConnectionString.txt";
+            string filename = @"c:\cas-service-options.xml";
 
             if (args.Length == 1)
             {
                 filename = args[0];
             }
 
-            this.mOptions = new ServiceOptions(filename);
+            this.mOptions = new ServiceConfig(filename);
 
-            int portsCount = this.mOptions.ComPortNames.Count(); // Количество портов
+            int portsCount = this.mOptions.Devices.Count(); // Количество портов
             Thread[] threads = new Thread[portsCount]; // Объявление массива потоков в количестве равном количеству приборов
 
             for (int i = 0; i < portsCount; i++) // Цикл для создания потоков
@@ -46,20 +46,20 @@ namespace WindowsService2
                 threads[i].IsBackground = true; // Свойство потока - фоновый
                 threads[i].Start(
                     new ComParameters(
-                        this.mOptions.ComPortNames.ElementAt(i),
-                        this.mOptions.ConnectionString)); // Запуск потока
+                        this.mOptions.Devices.ElementAt(i),
+                        this.mOptions.MysqlConnectionString)); // Запуск потока
             }
         }
 
         private void ReadInThread(object o)
         {
             ComParameters parameters = o as ComParameters;
-            string portname = parameters.Item1;
+            DeviceConfig config = parameters.Item1;
             string connection = parameters.Item2;
 
             COM COM1 = new COM();                           // Объявление объекта класса 'COM'
-            COM1.num_COM = portname;                        // Применение полю 'num_COM' значения 'COM1'
-            COM1.ID = 0x31;                                 // Применение полю ID значения "1"
+            COM1.num_COM = config.PortName;                 // Применение полю 'num_COM' значения 'COM1'
+            COM1.ID = config.Id;                            // Применение полю ID значения "1"
             COM1.Inic_COM();                                // Инициализация COM порта
 
             while (true)
