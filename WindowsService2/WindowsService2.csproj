@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Classes\DatabaseWriter.cs" />
     <Compile Include="Classes\DeviceConfig.cs" />
+    <Compile Include="Classes\Reader.cs" />
     <Compile Include="COM.cs" />
     <Compile Include="Classes\ServiceConfig.cs" />
     <Compile Include="ProjectInstaller.cs">
