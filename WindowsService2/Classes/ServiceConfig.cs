@@ -12,7 +12,7 @@ namespace WindowsService2.Classes
     {
         public ServiceConfig()
         {
-            this.MysqlConnectionString = String.Empty;
+            this.SqlConnectionString = String.Empty;
             this.Devices = new DeviceConfig[] { };
         }
 
@@ -25,7 +25,7 @@ namespace WindowsService2.Classes
                 {
                     XDocument doc = XDocument.Load(reader);
                     XElement root = doc.Root;
-                    this.MysqlConnectionString = (string)root
+                    this.SqlConnectionString = (string)root
                         .Element("connection")
                         .Element("mysql");
                     this.Devices = root
@@ -42,7 +42,7 @@ namespace WindowsService2.Classes
             }
         }
 
-        public string MysqlConnectionString { get; private set; }
+        public string SqlConnectionString { get; private set; }
         public IEnumerable<DeviceConfig> Devices { get; private set; }
     }
 }
