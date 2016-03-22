@@ -44,8 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\DeviceConfig.cs" />
     <Compile Include="COM.cs" />
-    <Compile Include="Classes\ServiceOptions.cs" />
+    <Compile Include="Classes\ServiceConfig.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

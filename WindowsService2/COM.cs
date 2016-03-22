@@ -13,7 +13,7 @@ namespace WindowsService2
     {
         System.IO.Ports.SerialPort rs_port;
         public string num_COM;
-        public byte ID;
+        public int ID;
         public void Inic_COM()
         {
             rs_port = new System.IO.Ports.SerialPort(num_COM, 9600,                    //Настройка COM-порта {Скорость - 9600, Чётность - НЕТ, Бит данных - 8, Стоповый бит - 1}
@@ -28,9 +28,9 @@ namespace WindowsService2
         }
 
         public void Opros(string mysqlConnectionString)
-        {                                                                                    
+        {
             SqlConnection conn = new SqlConnection(mysqlConnectionString);                            //Connection String
-            byte[] data = new byte[7] { 0x44, 0x30, ID, 0x4B, 0x57, 0x0D, 0x0A };                     //Посылка согласно протокола
+            byte[] data = new byte[7] { 0x44, 0x30, Convert.ToByte(ID + 0x30), 0x4B, 0x57, 0x0D, 0x0A }; //Посылка согласно протокола
             rs_port.Write(data, 0, 7);                                                                //Запись посылки в порт
             System.Threading.Thread.Sleep(100);                                                       //Задержка, ожидание ответа от прибора            
             string readmsg;
